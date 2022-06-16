@@ -4,15 +4,41 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blank Page</title>
+  <title>Library dashboard</title>
   <link href="./stylesheet/normalize.css" rel="stylesheet"></style>
   <link href="./stylesheet/style.css" rel="stylesheet"></style>
   <script src="https://kit.fontawesome.com/4c536a6bd5.js" crossorigin="anonymous"></script>
   <link rel="shortcut icon" href="./resources/images/site.ico"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">    
 </head>
 <body>
-  <head></head>  
-  <main></main>
+  <header>Interactive Library</header>
+  <main>
+    <div class="content">
+      <div class="sidebar">
+        <div class="fixed">
+          <p>Add new book</p>
+          <form class="library_form">
+            <input type="text" name="title" id="title" placeholder="Title" required>
+            <div data-key="title" class="alert"></div>
+            <input type="text" name="author" id="author" placeholder="Author" required>
+            <div data-key="author" class="alert"></div>
+            <input type="text" name="pages" id="pages" placeholder="Number of pages" required>
+            <div data-key="pages" class="alert"></div>
+            <div>
+              <label for="read">Have you read it?</label>
+              <input type="checkbox" name="read" id="read">
+              <input type="submit">
+            </div>
+          </form>
+          <button class="toggle_library_form">Close</button>
+        </div>
+      </div>
+      <div class="library">
+      </div>
+    </div>
+  </main>
   <footer>
     <p>Copyright © 2022 Alessandro Celotti</p>
     <a href="https://github.com/cel8" target="_blank"><i class="fab fa-github"></i></a>

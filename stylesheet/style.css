@@ -3,13 +3,15 @@ html, body {
   height: 100%;
   margin: 0px;
   padding: 0px;
-}
-
-main {
-  display: flex;
+  font-family: 'Roboto', sans-serif;
+  overflow: hidden;
 }
 
 footer {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
   background-color: black;
   color: white;
   justify-content: center;
@@ -22,4 +24,87 @@ footer {
 
 a { 
   color: inherit; 
+}
+
+header {
+  margin: 1rem 1rem 1rem 2rem;
+  font-size: 24px;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 0.5fr 2fr;
+  column-gap: 1.5rem;
+  overflow-y: scroll;
+  height: 90vh;
+}
+
+.sidebar {
+  padding: 1rem;
+}
+
+.fixed {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: fixed;
+}
+
+.library_form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.library {
+  display: grid;
+  padding: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-rows: repeat(auto-fill, minmax(175px, 1fr));
+  row-gap: 2rem;
+}
+
+.book {
+  border: 1px solid #000;
+  background-color: #eee;
+  box-shadow: 0.5rem 0.5rem 0.5rem rgba(0,0,0,.2);
+  border-radius: 0.3rem;
+  padding: 1rem;
+  width: 10rem;
+  height: 10rem;
+}
+
+.book_icons > ul {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.book_icons ul, .book_icons li {
+  list-style-type: none;
+}
+
+input {
+  border: #E5E7EB solid 0.1rem;
+  border-radius: 0.2rem;
+  box-shadow: 0rem 0.5rem 0.9rem rgba(0,0,0,0.1);
+}
+
+input:invalid {
+  border: rgb(185, 28, 28) solid 0.1rem;
+}
+
+input:valid {
+  border: rgb(89, 109, 72) solid 0.1rem;
+}
+
+input:focus {
+  border: rgb(29, 78, 216) solid 0.1rem;
+  outline: none;
+}
+
+.alert {
+  font-size: 12px;
+  font-weight: normal;
+  color: rgb(185, 28, 28);
 }
