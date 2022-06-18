@@ -56,6 +56,12 @@ header {
   gap: 1rem;
 }
 
+.storage {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
 .library {
   display: grid;
   padding: 2rem;

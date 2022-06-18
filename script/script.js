@@ -3,6 +3,7 @@
 const inputs = document.querySelectorAll('input');
 const libraryForm = document.querySelector('.library_form');
 const libraryGrid = document.querySelector('.library');
+const divStorage = document.querySelector('.storage');
 
 const patterns = {
   title:  /^[A-zÀ-ž0-9\s'.,\-&#*():;?\/\\]{1,200}$/i,
@@ -28,27 +29,32 @@ class Book {
 
 class Library {
   constructor() {
-    this.library = [];
+    this.books = [];
   }
   addBook(book) {
-    this.library.push(book);
+    this.books.push(book);
   }
   removeBook(title, author) {
-    this.library = this.library.filter((b) => !((title === b.title) && (author === b.author)));
+    this.books = this.books.filter((b) => !((title === b.title) && (author === b.author)));
   }
   getBook(title, author) {
-    return this.library.find((b) => (title === b.title) && (author === b.author));
+    return this.books.find((b) => (title === b.title) && (author === b.author));
   }
   isBookInLibrary(title, author) {
-    return this.library.some((b) => (title === b.title) && (author === b.author));
+    return this.books.some((b) => (title === b.title) && (author === b.author));
   }
 }
 
-let library = new Library();
+let library = undefined;
 
 // Events
 window.addEventListener('load', () => {
-  // initialize();
+  library = new Library();
+  restoreLocal();
+  library.books.forEach(book => {
+    attachBook(book);
+  });
+  loadEmptyStorage();
 });
 
 inputs.forEach((input) => {
@@ -65,10 +71,13 @@ libraryForm.addEventListener('invalid', (e) => {
 
 libraryForm.onsubmit = (e) => {
   e.preventDefault();
-  let book = getBook();
+  let book = getBookFrom();
   if(!library.isBookInLibrary(book.title, book.author)) {
     library.addBook(book);
     attachBook(book);
+    resetBookForm();
+    saveLocal();
+    loadEmptyStorage();
   }
 };
 
@@ -88,7 +97,7 @@ function validate(field, regex) {
   }
 }
 
-function getBook() {
+function getBookFrom() {
   const title  = document.getElementById('title');
   const author = document.getElementById('author');
   const pages  = document.getElementById('pages');
@@ -96,29 +105,44 @@ function getBook() {
   return new Book(title.value, author.value, pages.value, read.checked);
 }
 
+function resetBookForm() {
+  const title  = document.getElementById('title');
+  const author = document.getElementById('author');
+  const pages  = document.getElementById('pages');
+  const read   = document.getElementById('read');
+  title.value = '';
+  author.value = '';
+  pages.value = '';
+  read.checked = false;
+}
+
+function addIcon(elemUl, iconName, altName, handler) {
+  const svgName = './resources/images/svg/' + iconName;
+  const li = document.createElement('li');
+  const img = document.createElement('img');
+  img.setAttribute('src', svgName);
+  img.setAttribute('alt', altName);
+  img.setAttribute('class', 'icon');
+  img.addEventListener('click', handler);
+  li.appendChild(img);
+  elemUl.appendChild(li);
+}
+
 function createBookIcons(read) {
   const div = document.createElement('div');
   div.className = 'book_icons';
   const ul = document.createElement('ul');
-  const liRead = document.createElement('li');
-  const imgRead = document.createElement('img');
-  imgRead.setAttribute('src', (!read ? './resources/images/svg/book-alert.svg'
-                                     : './resources/images/svg/book-check.svg'));
-  imgRead.setAttribute('alt', 'unread');
-  imgRead.setAttribute('class', 'icon');
-  imgRead.addEventListener('click', toggleBookRead);
-  liRead.appendChild(imgRead);
-  const liCancel = document.createElement('li');
-  const imgCancel = document.createElement('img');
-  imgCancel.setAttribute('src', './resources/images/svg/book-cancel.svg');
-  imgCancel.setAttribute('alt', 'cancel');
-  imgCancel.setAttribute('class', 'icon');
-  imgCancel.addEventListener('click', detachBook);
-  liCancel.appendChild(imgCancel);
-  ul.appendChild(liRead);
-  ul.appendChild(liCancel);
+  const toggleReadIcon = (!read ? 'book-alert.svg' : 'book-check.svg');
+  addIcon(ul, toggleReadIcon, 'unread', toggleBookRead);
+  addIcon(ul, 'book-edit.svg', 'edit', editBook);
+  addIcon(ul, 'book-cancel.svg', 'cancel', removeBook);
   div.appendChild(ul);
   return div;
+}
+
+function removeBook(e) {
+  const bookDiv = e.target.closest('.book');
+  detachBook(bookDiv);
 }
 
 function attachBook(book) {
@@ -139,13 +163,14 @@ function attachBook(book) {
   libraryGrid.appendChild(div);
 }
 
-function detachBook(e) {
-  const bookDiv = e.target.closest('.book');
+function detachBook(bookDiv) {
   const str_name   = bookDiv.querySelector('.str_name');
   const str_author = bookDiv.querySelector('.str_author');
   if(library.isBookInLibrary(str_name.textContent, str_author.textContent)) {
     library.removeBook(str_name.textContent, str_author.textContent);
     bookDiv.remove();
+    saveLocal();
+    loadEmptyStorage();
   }
 }
 
@@ -158,6 +183,44 @@ function toggleBookRead(e) {
     book.read = !book.read;
     e.target.setAttribute('src', (!book.read ? './resources/images/svg/book-alert.svg'
                                              : './resources/images/svg/book-check.svg'));
+    saveLocal();
   }
+}
 
+function editBook(e) {
+
+}
+
+function saveLocal() {
+  localStorage.setItem('library', JSON.stringify(library.books));
+}
+
+function restoreLocal() {
+  const books = JSON.parse(localStorage.getItem('library'));
+  if(books) {
+    library.books = books.map((book) => new Book(book.title, book.author, book.nPages, book.read));
+  } else {
+    library.books = [];
+  }
+}
+
+function loadEmptyStorage() {
+  const div = divStorage.querySelector('div');
+  const img = divStorage.querySelector('img');
+  const emptyLibrary = (library && library.books.length > 0);
+  const icon = emptyLibrary ? 'delete.svg' : 'delete-empty.svg';
+  div.textContent = emptyLibrary ? 'Delete local storage' : 'Empty local storage';
+  const svgName = './resources/images/svg/' + icon;
+  img.setAttribute('src', svgName);
+  img.setAttribute('alt', 'storage');
+  img.setAttribute('class', 'icon');
+  if(emptyLibrary) img.addEventListener('click', emptyLocal);
+}
+
+function emptyLocal() {
+  localStorage.setItem('library', null);
+  while(libraryGrid.lastChild) {
+    detachBook(libraryGrid.lastChild);/* Removing the last child of the libraryGrid element. */
+    libraryGrid.removeChild(libraryGrid.lastChild);
+  }
 }
