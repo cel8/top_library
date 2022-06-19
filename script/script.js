@@ -4,6 +4,8 @@ const inputs = document.querySelectorAll('input');
 const libraryForm = document.querySelector('.library_form');
 const libraryGrid = document.querySelector('.library');
 const divStorage = document.querySelector('.storage');
+const btnCancel = document.querySelector('.cancel');
+let editBookDiv = null;
 
 const patterns = {
   title:  /^[A-zÀ-ž0-9\s'.,\-&#*():;?\/\\]{1,200}$/i,
@@ -37,6 +39,15 @@ class Library {
   removeBook(title, author) {
     this.books = this.books.filter((b) => !((title === b.title) && (author === b.author)));
   }
+  editBook(title, author, book) {
+    const index = this.books.findIndex((b) => (title === b.title) && (author === b.author));
+    if(-1 != index) {
+      this.books[index].title  = book.title;
+      this.books[index].author = book.author;
+      this.books[index].nPages = book.nPages;
+      this.books[index].read   = book.read;
+    }
+  }
   getBook(title, author) {
     return this.books.find((b) => (title === b.title) && (author === b.author));
   }
@@ -69,16 +80,31 @@ libraryForm.addEventListener('invalid', (e) => {
   e.preventDefault();
 }, true);
 
+btnCancel.addEventListener('click', (e) => {
+  resetBookForm();
+  resetEditBook();
+});
+
 libraryForm.onsubmit = (e) => {
   e.preventDefault();
   let book = getBookFrom();
-  if(!library.isBookInLibrary(book.title, book.author)) {
-    library.addBook(book);
-    attachBook(book);
-    resetBookForm();
-    saveLocal();
-    loadEmptyStorage();
+  if(editBookDiv != null) {
+    const borrowed = borrowBook(editBookDiv);    
+    if(!library.isBookInLibrary(book.title, book.author) || 
+        isBookEditable(book, borrowed)) {
+      library.editBook(borrowed.title, borrowed.author, book);
+      updateBook(borrowed, book);
+    }
+  } else {
+    if(!library.isBookInLibrary(book.title, book.author)) {
+      library.addBook(book);
+      attachBook(book);
+    }
   }
+  saveLocal();
+  loadEmptyStorage();
+  resetBookForm();
+  resetEditBook();
 };
 
 // Internal functions
@@ -105,6 +131,22 @@ function getBookFrom() {
   return new Book(title.value, author.value, pages.value, read.checked);
 }
 
+function loadBookForm() {
+  const title  = document.getElementById('title');
+  const author = document.getElementById('author');
+  const pages  = document.getElementById('pages');
+  const read   = document.getElementById('read');
+  const book = borrowBook(editBookDiv);
+  if(book != undefined) {
+    title.value = book.title;
+    author.value = book.author;
+    pages.value = book.nPages;
+    read.checked = book.read;
+  } else {
+    editBookDiv = null;
+  }
+}
+
 function resetBookForm() {
   const title  = document.getElementById('title');
   const author = document.getElementById('author');
@@ -122,7 +164,7 @@ function addIcon(elemUl, iconName, altName, handler) {
   const img = document.createElement('img');
   img.setAttribute('src', svgName);
   img.setAttribute('alt', altName);
-  img.setAttribute('class', 'icon');
+  img.setAttribute('class', altName + ' icon');
   img.addEventListener('click', handler);
   li.appendChild(img);
   elemUl.appendChild(li);
@@ -133,7 +175,7 @@ function createBookIcons(read) {
   div.className = 'book_icons';
   const ul = document.createElement('ul');
   const toggleReadIcon = (!read ? 'book-alert.svg' : 'book-check.svg');
-  addIcon(ul, toggleReadIcon, 'unread', toggleBookRead);
+  addIcon(ul, toggleReadIcon, 'readFlag', toggleBookRead);
   addIcon(ul, 'book-edit.svg', 'edit', editBook);
   addIcon(ul, 'book-cancel.svg', 'cancel', removeBook);
   div.appendChild(ul);
@@ -156,6 +198,7 @@ function attachBook(book) {
   pAuthor.className = 'str_author';
   const pNoPag  = document.createElement('p');
   pNoPag.textContent = book.nPages;
+  pNoPag.className = 'str_pages';
   div.appendChild(pName);
   div.appendChild(pAuthor);
   div.appendChild(pNoPag);
@@ -164,10 +207,9 @@ function attachBook(book) {
 }
 
 function detachBook(bookDiv) {
-  const str_name   = bookDiv.querySelector('.str_name');
-  const str_author = bookDiv.querySelector('.str_author');
-  if(library.isBookInLibrary(str_name.textContent, str_author.textContent)) {
-    library.removeBook(str_name.textContent, str_author.textContent);
+  const book = borrowBook(bookDiv);
+  if(book != undefined) {
+    library.removeBook(book.title, book.author);
     bookDiv.remove();
     saveLocal();
     loadEmptyStorage();
@@ -176,19 +218,80 @@ function detachBook(bookDiv) {
 
 function toggleBookRead(e) {
   const bookDiv = e.target.closest('.book');
-  const str_name   = bookDiv.querySelector('.str_name');
-  const str_author = bookDiv.querySelector('.str_author');
-  const book = library.getBook(str_name.textContent, str_author.textContent);
+  const book = borrowBook(bookDiv);
   if(book != undefined) {
     book.read = !book.read;
-    e.target.setAttribute('src', (!book.read ? './resources/images/svg/book-alert.svg'
-                                             : './resources/images/svg/book-check.svg'));
+    const iconName = (!book.read ? 'book-alert.svg' : 'book-check.svg');
+    const svgName = './resources/images/svg/' + iconName;
+    e.target.setAttribute('src', svgName);
     saveLocal();
   }
 }
 
 function editBook(e) {
+  const bookDiv = e.target.closest('.book');
+  if(editBookDiv != null) {
+    let book = getBookFrom();
+    const borrowed = borrowBook(editBookDiv);
+    if(!library.isBookInLibrary(book.title, book.author) || 
+        isBookEditable(book, borrowed)) {
+      library.editBook(borrowed.title, borrowed.author, book);
+      updateBook(borrowed, book);
+      saveLocal();
+      loadEmptyStorage();
+    }
+    resetEditBook();
+    resetBookForm();
+  } else {
+    editBookDiv = bookDiv;
+    setEditBook();
+    loadBookForm();
+  }
+}
 
+// Editable book when primary key does not change, but secondary fields do
+function isBookEditable(bookA, bookB) {
+  return (((bookA.title === bookB.title) && (bookA.author === bookB.author)) &&
+          ((bookA.nPages !== bookB.nPages) || (bookA.read !== bookB.read)));
+}
+
+function borrowBook(bookDiv) {
+  const str_name   = bookDiv.querySelector('.str_name');
+  const str_author = bookDiv.querySelector('.str_author');
+  const book = library.getBook(str_name.textContent, str_author.textContent);
+  return book;
+}
+
+function updateBook(borrowed, newBook) {
+  const pName = editBookDiv.querySelector('.str_name');
+  pName.textContent = newBook.title;
+  const pAuthor = editBookDiv.querySelector('.str_author');
+  pAuthor.textContent = newBook.author;
+  const pNoPag = editBookDiv.querySelector('.str_pages');
+  pNoPag.textContent = newBook.nPages;
+  if(borrowed.read != newBook.read) {
+    const toggleReadIcon = (!newBook.read ? 'book-alert.svg' : 'book-check.svg');
+    const svgName = './resources/images/svg/' + toggleReadIcon;
+    const imgToggleReadIcon = editBookDiv.querySelector('.readFlag');
+    imgToggleReadIcon.setAttribute('src', svgName);
+  }
+}
+
+function setEditBook() {
+  const iconName = 'book-lock.svg';
+  const svgName = './resources/images/svg/' + iconName;
+  const imgEdit = editBookDiv.querySelector('.edit');
+  imgEdit.setAttribute('src', svgName);
+}
+
+function resetEditBook() {
+  if(editBookDiv != null) {
+    const iconName = 'book-edit.svg';
+    const svgName = './resources/images/svg/' + iconName;
+    const imgEdit = editBookDiv.querySelector('.edit');
+    imgEdit.setAttribute('src', svgName);
+    editBookDiv = null;
+  }
 }
 
 function saveLocal() {
@@ -220,7 +323,8 @@ function loadEmptyStorage() {
 function emptyLocal() {
   localStorage.setItem('library', null);
   while(libraryGrid.lastChild) {
-    detachBook(libraryGrid.lastChild);/* Removing the last child of the libraryGrid element. */
+    /* Removing the last child of the libraryGrid element. */
+    detachBook(libraryGrid.lastChild);
     libraryGrid.removeChild(libraryGrid.lastChild);
   }
 }
