@@ -312,6 +312,8 @@ function setEditBook() {
   const svgName = './resources/images/svg/' + iconName;
   const imgEdit = editBookDiv.querySelector('.edit');
   imgEdit.setAttribute('src', svgName);
+  btnToggleForm.disabled = true;
+  autoOpenForm();
 }
 
 function resetEditBook() {
@@ -320,7 +322,23 @@ function resetEditBook() {
     const svgName = './resources/images/svg/' + iconName;
     const imgEdit = editBookDiv.querySelector('.edit');
     imgEdit.setAttribute('src', svgName);
+    btnToggleForm.disabled = false;
     editBookDiv = null;
+  }
+}
+
+function autoOpenForm() {
+  const storageText = document.querySelector('.storage_text');
+  const content = document.querySelector('.content');
+  const sideContainer = document.querySelector('.side_visible_container');
+  if(!openForm) {
+    libraryForm.style.display = 'flex';
+    storageText.style.display = 'block';
+    btnToggleForm.textContent = 'Close';
+    sideContainer.style.flexDirection = 'column';
+    sideContainer.style.alignItems = 'stretch';
+    content.style.gridTemplateColumns = '13.5rem 2fr';
+    openForm = true;
   }
 }
 
@@ -351,11 +369,13 @@ function loadEmptyStorage() {
 }
 
 function emptyLocal() {
-  this.library = [];
-  localStorage.setItem('library', null);
-  while(libraryGrid.lastChild) {
-    /* Removing the last child of the libraryGrid element. */
-    libraryGrid.removeChild(libraryGrid.lastChild);
+  if(editBookDiv === null) { // Cannot empty storage during edit
+    this.library = [];
+    localStorage.setItem('library', null);
+    while(libraryGrid.lastChild) {
+      /* Removing the last child of the libraryGrid element. */
+      libraryGrid.removeChild(libraryGrid.lastChild);
+    }
+    loadEmptyStorage();
   }
-  loadEmptyStorage();
 }

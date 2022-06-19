@@ -159,12 +159,12 @@ button {
   filter: drop-shadow(1px 2px 0 rgb(184, 184, 184));
 }
 
-button:hover {
+button:hover:enabled {
   filter: brightness(90%) drop-shadow(1px 2px 0 rgb(184, 184, 184));
 }
 
 .icon:active,
-button:active {
+button:active:enabled {
   transform: translateY(4px) translateX(2px);
   filter: brightness(90%) drop-shadow(1px 1px 0 #666);
 }
