@@ -6,6 +6,7 @@ const libraryGrid = document.querySelector('.library');
 const divStorage = document.querySelector('.storage');
 const btnCancel = document.querySelector('.cancel');
 const btnToggleForm = document.querySelector('.toggle_library_form');
+const icons = document.querySelectorAll('.icon');
 let editBookDiv = null;
 let openForm = false;
 
@@ -96,13 +97,15 @@ btnToggleForm.addEventListener('click', (e) => {
     storageText.style.display = 'block';
     btnToggleForm.textContent = 'Close';
     sideContainer.style.flexDirection = 'column';
-    content.style.gridTemplateColumns = '12.5rem 2fr';
+    sideContainer.style.alignItems = 'stretch';
+    content.style.gridTemplateColumns = '13.5rem 2fr';
     openForm = true;
   } else {
     libraryForm.style.display = 'none';
     storageText.style.display = 'none';
     btnToggleForm.innerHTML = 'A<br>d<br>d<br> <br>n<br>e<br>w<br> <br>b<br>o<br>o<br>k';
     sideContainer.style.flexDirection = 'column-reverse';
+    sideContainer.style.alignItems = 'center';
     content.style.gridTemplateColumns = '0fr 2fr';
     openForm = false;
   }
@@ -351,3 +354,7 @@ function emptyLocal() {
     libraryGrid.removeChild(libraryGrid.lastChild);
   }
 }
+
+icons.forEach(i => {
+  i.setAttribute("draggable", false);
+});
