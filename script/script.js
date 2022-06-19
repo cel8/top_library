@@ -10,8 +10,8 @@ let editBookDiv = null;
 let openForm = false;
 
 const patterns = {
-  title:  /^[A-zÀ-ž0-9\s'.,\-&#*():;?\/\\]{1,200}$/i,
-  author: /^[A-zÀ-ž]{1,50}[A-zÀ-ž0-9\s'.\-]{0,50}$/i,
+  title:  /^[A-zÀ-ž0-9\s'.,\-&#*():’;?\/\\]{1,200}$/i,
+  author: /^[A-zÀ-ž]{1,50}[A-zÀ-ž0-9\s’'.\-]{0,50}$/i,
   pages:  /^(?!(0))[0-9]{1,10}$/
 }
 
