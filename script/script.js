@@ -96,7 +96,7 @@ btnToggleForm.addEventListener('click', (e) => {
     storageText.style.display = 'block';
     btnToggleForm.textContent = 'Close';
     sideContainer.style.flexDirection = 'column';
-    content.style.gridTemplateColumns = '0.5fr 2fr';
+    content.style.gridTemplateColumns = '12.5rem 2fr';
     openForm = true;
   } else {
     libraryForm.style.display = 'none';
