@@ -90,16 +90,19 @@ btnCancel.addEventListener('click', (e) => {
 btnToggleForm.addEventListener('click', (e) => {
   const storageText = document.querySelector('.storage_text');
   const content = document.querySelector('.content');
+  const sideContainer = document.querySelector('.side_visible_container');
   if(!openForm) {
     libraryForm.style.display = 'flex';
     storageText.style.display = 'block';
     btnToggleForm.textContent = 'Close';
+    sideContainer.style.flexDirection = 'column';
     content.style.gridTemplateColumns = '0.5fr 2fr';
     openForm = true;
   } else {
     libraryForm.style.display = 'none';
     storageText.style.display = 'none';
     btnToggleForm.innerHTML = 'A<br>d<br>d<br> <br>n<br>e<br>w<br> <br>b<br>o<br>o<br>k';
+    sideContainer.style.flexDirection = 'column-reverse';
     content.style.gridTemplateColumns = '0fr 2fr';
     openForm = false;
   }

@@ -27,7 +27,7 @@ a {
 }
 
 header {
-  margin: 1rem 1rem 1rem 2rem;
+  margin: 1rem 1rem 0rem 1rem;
   font-size: 24px;
 }
 
@@ -40,7 +40,7 @@ header {
 }
 
 .sidebar {
-  padding: 1rem;
+  padding: 2rem 1rem;
 }
 
 .fixed {
@@ -68,7 +68,7 @@ header {
 
 .side_visible_container {
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse;
   gap: 1rem;
 }
 
