@@ -247,11 +247,16 @@ function toggleBookRead(e) {
   const bookDiv = e.target.closest('.book');
   const book = borrowBook(bookDiv);
   if(book != undefined) {
-    book.read = !book.read;
-    const iconName = (!book.read ? 'book-alert.svg' : 'book-check.svg');
-    const svgName = './resources/images/svg/' + iconName;
-    e.target.setAttribute('src', svgName);
-    saveLocal();
+    if(editBookDiv != null) {
+      const read   = document.getElementById('read');
+      read.checked = !book.read;
+    } else {
+      book.read = !book.read;
+      const iconName = (!book.read ? 'book-alert.svg' : 'book-check.svg');
+      const svgName = './resources/images/svg/' + iconName;
+      e.target.setAttribute('src', svgName);
+      saveLocal();
+    }
   }
 }
 
@@ -346,10 +351,11 @@ function loadEmptyStorage() {
 }
 
 function emptyLocal() {
+  this.library = [];
   localStorage.setItem('library', null);
   while(libraryGrid.lastChild) {
     /* Removing the last child of the libraryGrid element. */
-    detachBook(libraryGrid.lastChild);
     libraryGrid.removeChild(libraryGrid.lastChild);
   }
+  loadEmptyStorage();
 }

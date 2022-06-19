@@ -5,6 +5,8 @@ Learning:
 <ul>
   <li>CSS grid;</li>
   <li>Javascript;</li>
+  <li>Class;</li>
+  <li>Local storage;</li>
 </ul>
 
 Live demo <a href="https://cel8.github.io/top_library/">here</a>.
