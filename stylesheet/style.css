@@ -168,3 +168,23 @@ button:active {
   transform: translateY(4px) translateX(2px);
   filter: brightness(90%) drop-shadow(1px 1px 0 #666);
 }
+
+input[type="checkbox"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Styling checkbox */
+  width: 1rem;
+  height: 1rem;
+
+  /* For iOS < 15 to remove gradient background */
+  background-color: #fff;
+  /* Not removed via appearance */
+  margin: 0;
+}
+
+input[type="checkbox"]:checked {
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  background-color: #94A3B8;
+}

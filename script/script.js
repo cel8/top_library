@@ -6,7 +6,6 @@ const libraryGrid = document.querySelector('.library');
 const divStorage = document.querySelector('.storage');
 const btnCancel = document.querySelector('.cancel');
 const btnToggleForm = document.querySelector('.toggle_library_form');
-const icons = document.querySelectorAll('.icon');
 let editBookDiv = null;
 let openForm = false;
 
@@ -119,7 +118,7 @@ libraryForm.onsubmit = (e) => {
     if(!library.isBookInLibrary(book.title, book.author) || 
         isBookEditable(book, borrowed)) {
       library.editBook(borrowed.title, borrowed.author, book);
-      updateBook(borrowed, book);
+      updateBook(book);
     }
   } else {
     if(!library.isBookInLibrary(book.title, book.author)) {
@@ -140,12 +139,14 @@ function addCustomValidationText(fieldName, valid = false) {
 }
 
 function validate(field, regex) {
-  if(regex.test(field.value)) {
-    field.setCustomValidity('');
-    addCustomValidationText(field.name, true);
-  } else {
-    field.setCustomValidity('invalid');
-    addCustomValidationText(field.name);
+  if(regex != undefined) {
+    if(regex.test(field.value)) {
+      field.setCustomValidity('');
+      addCustomValidationText(field.name, true);
+    } else {
+      field.setCustomValidity('invalid');
+      addCustomValidationText(field.name);
+    }
   }
 }
 
@@ -262,7 +263,7 @@ function editBook(e) {
     if(!library.isBookInLibrary(book.title, book.author) || 
         isBookEditable(book, borrowed)) {
       library.editBook(borrowed.title, borrowed.author, book);
-      updateBook(borrowed, book);
+      updateBook(book);
       saveLocal();
       loadEmptyStorage();
     }
@@ -288,19 +289,17 @@ function borrowBook(bookDiv) {
   return book;
 }
 
-function updateBook(borrowed, newBook) {
+function updateBook(newBook) {
   const pName = editBookDiv.querySelector('.str_name');
   pName.textContent = newBook.title;
   const pAuthor = editBookDiv.querySelector('.str_author');
   pAuthor.textContent = newBook.author;
   const pNoPag = editBookDiv.querySelector('.str_pages');
   pNoPag.textContent = newBook.nPages;
-  if(borrowed.read != newBook.read) {
-    const toggleReadIcon = (!newBook.read ? 'book-alert.svg' : 'book-check.svg');
-    const svgName = './resources/images/svg/' + toggleReadIcon;
-    const imgToggleReadIcon = editBookDiv.querySelector('.readFlag');
-    imgToggleReadIcon.setAttribute('src', svgName);
-  }
+  const toggleReadIcon = (!newBook.read ? 'book-alert.svg' : 'book-check.svg');
+  const svgName = './resources/images/svg/' + toggleReadIcon;
+  const imgToggleReadIcon = editBookDiv.querySelector('.readFlag');
+  imgToggleReadIcon.setAttribute('src', svgName);
 }
 
 function setEditBook() {
@@ -354,7 +353,3 @@ function emptyLocal() {
     libraryGrid.removeChild(libraryGrid.lastChild);
   }
 }
-
-icons.forEach(i => {
-  i.setAttribute("draggable", false);
-});
