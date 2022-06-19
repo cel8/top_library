@@ -5,7 +5,9 @@ const libraryForm = document.querySelector('.library_form');
 const libraryGrid = document.querySelector('.library');
 const divStorage = document.querySelector('.storage');
 const btnCancel = document.querySelector('.cancel');
+const btnToggleForm = document.querySelector('.toggle_library_form');
 let editBookDiv = null;
+let openForm = false;
 
 const patterns = {
   title:  /^[A-zÀ-ž0-9\s'.,\-&#*():;?\/\\]{1,200}$/i,
@@ -83,6 +85,24 @@ libraryForm.addEventListener('invalid', (e) => {
 btnCancel.addEventListener('click', (e) => {
   resetBookForm();
   resetEditBook();
+});
+
+btnToggleForm.addEventListener('click', (e) => {
+  const storageText = document.querySelector('.storage_text');
+  const content = document.querySelector('.content');
+  if(!openForm) {
+    libraryForm.style.display = 'flex';
+    storageText.style.display = 'block';
+    btnToggleForm.textContent = 'Close';
+    content.style.gridTemplateColumns = '0.5fr 2fr';
+    openForm = true;
+  } else {
+    libraryForm.style.display = 'none';
+    storageText.style.display = 'none';
+    btnToggleForm.innerHTML = 'A<br>d<br>d<br> <br>n<br>e<br>w<br> <br>b<br>o<br>o<br>k';
+    content.style.gridTemplateColumns = '0fr 2fr';
+    openForm = false;
+  }
 });
 
 libraryForm.onsubmit = (e) => {

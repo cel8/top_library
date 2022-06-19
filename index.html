@@ -18,8 +18,8 @@
     <div class="content">
       <div class="sidebar">
         <div class="fixed">
-          <p>Add new book</p>
           <form class="library_form">
+            <p>Add new book</p>
             <input type="text" name="title" id="title" placeholder="Title" required>
             <div data-key="title" class="alert"></div>
             <input type="text" name="author" id="author" placeholder="Author" required>
@@ -33,11 +33,13 @@
             </div>
             <button class="cancel">Cancel</button>
           </form>
-          <div class="storage">
-            <div></div>
-            <img>
+          <div class="side_visible_container">
+            <div class="storage">
+              <div class="storage_text"></div>
+              <img>
+            </div>
+            <button class="toggle_library_form">A<br>d<br>d<br> <br>n<br>e<br>w<br> <br>b<br>o<br>o<br>k</button>
           </div>
-          <button class="toggle_library_form">Close</button>
         </div>
       </div>
       <div class="library">

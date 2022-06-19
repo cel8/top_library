@@ -33,7 +33,7 @@ header {
 
 .content {
   display: grid;
-  grid-template-columns: 0.5fr 2fr;
+  grid-template-columns: 0fr 2fr;
   column-gap: 1.5rem;
   overflow-y: scroll;
   height: 90vh;
@@ -51,7 +51,7 @@ header {
 }
 
 .library_form {
-  display: flex;
+  display: none;
   flex-direction: column;
   gap: 1rem;
 }
@@ -60,6 +60,16 @@ header {
   display: flex;
   gap: 1rem;
   align-items: center;
+}
+
+.storage_text {
+  display: none;
+}
+
+.side_visible_container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .library {
