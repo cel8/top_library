@@ -76,8 +76,16 @@ header {
   box-shadow: 0.5rem 0.5rem 0.5rem rgba(0,0,0,.2);
   border-radius: 0.3rem;
   padding: 1rem;
-  width: 10rem;
-  height: 10rem;
+  width: 12.5rem;
+  height: 11.5rem;
+}
+
+.book > p {
+  width: 11.5rem;
+  padding: 0.2rem 0.5rem;
+  /* Both of the following are required for text-overflow */
+  white-space: nowrap;
+  overflow-x: auto;
 }
 
 .book_icons > ul {
@@ -94,6 +102,7 @@ input {
   border: #E5E7EB solid 0.1rem;
   border-radius: 0.2rem;
   box-shadow: 0rem 0.5rem 0.9rem rgba(0,0,0,0.1);
+  overflow: hidden;
 }
 
 input:invalid {
